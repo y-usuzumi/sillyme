@@ -4,14 +4,12 @@
 
 module SillyMe.Store.Repo where
 
+import           Control.Monad.IO.Class
 import           SillyMe.Store
 import           SillyMe.Store.Engine
 import           SillyMe.Store.Model
 
 class Model model => Repo engine model where
-  getAll :: engine -> [UniqueData model]
-  getById :: engine -> IdType model -> UniqueData model
-
-instance Repo FileSystemEngine Lang where
-  getAll FileSystemEngine{..} = undefined
-  getById FileSystemEngine{..} = undefined
+  getAll :: MonadIO mio => engine -> mio [UniqueData model]
+  getById :: MonadIO mio => engine -> IdType model -> mio (Maybe (UniqueData model))
+  save :: MonadIO mio => engine -> UniqueData model -> mio (UniqueData model)

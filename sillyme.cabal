@@ -15,21 +15,26 @@ cabal-version:       >=1.10
 
 library
   hs-source-dirs:      src
-  exposed-modules:     Lib
+  exposed-modules:     SillyMe
                      , SillyMe.Store
                      , SillyMe.Store.Model
                      , SillyMe.Store.Repo
   build-depends:       base >= 4.7 && < 5
+                     , deepseq
+                     , sqlite-simple
                      , uuid
                      , text
   default-language:    Haskell2010
 
-executable sillyme-exe
+executable sillyme
   hs-source-dirs:      app
   main-is:             Main.hs
   ghc-options:         -threaded -rtsopts -with-rtsopts=-N
   build-depends:       base
                      , sillyme
+                     -- External dependencies
+                     , optparse-applicative
+                     , text
   default-language:    Haskell2010
 
 test-suite sillyme-test
