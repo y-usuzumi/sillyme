@@ -17,10 +17,11 @@ library
   hs-source-dirs:      src
   exposed-modules:     SillyMe
                      , SillyMe.Store
+                     , SillyMe.Store.Engine
+                     , SillyMe.Store.Engine.SQLite
                      , SillyMe.Store.Model
                      , SillyMe.Store.Repo
   build-depends:       base >= 4.7 && < 5
-                     , deepseq
                      , sqlite-simple
                      , uuid
                      , text

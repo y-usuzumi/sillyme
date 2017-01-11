@@ -2,10 +2,9 @@
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE RecordWildCards       #-}
 
-module SillyMe.Store.Repo.FileSystem where
+module SillyMe.Store.Repo.SQLite where
 
 import           Control.Arrow
-import           Control.DeepSeq
 import           Control.Monad.IO.Class
 import           Data.Text                        (Text)
 import qualified Data.Text                        as T
@@ -17,7 +16,7 @@ import           Database.SQLite.Simple.FromRow
 import           Database.SQLite.Simple.Internal
 import           Database.SQLite.Simple.ToField
 import           Database.SQLite.Simple.Ok
-import           SillyMe.Store.Engine.SQLite
+import {-# SOURCE #-}          SillyMe.Store.Engine.SQLite
 import           SillyMe.Store.Model
 import           SillyMe.Store.Repo
 
@@ -36,17 +35,39 @@ getAllLangsQuery = "select id, name from lang"
 getLangByIdQuery :: Query
 getLangByIdQuery = "select id, name from lang where id=:id"
 
+createLang :: Query
+createLang = "insert into lang (id, name) values (:id, :name)"
+
+updateLang :: Query
+updateLang = "update lang set name=:name where id=:id"
+
+getLangIdByRowId :: Query
+getLangIdByRowId = "select id from lang where ROWID=:rowid"
+
 instance Repo SQLiteEngine Lang where
+  init SQLiteEngine{..} = undefined
   getAll SQLiteEngine{..} = liftIO $ do
-    conn <- open location
-    r <- query_ conn getAllLangsQuery :: IO [(UUID, Text)]
-    return (force $ map (id *** Lang) r) >>= seq (close conn) . return
+    withConnection location $ \conn -> do
+      r <- query_ conn getAllLangsQuery :: IO [(UUID, Text)]
+      return $ map (id *** Lang) r
 
   getById SQLiteEngine{..} uuid = liftIO $ do
-    conn <- open location
-    r <- queryNamed conn getLangByIdQuery [ ":id" := uuid ]
-    case r of
-      [] -> return Nothing
-      (uuid, lang):_ -> return $ Just $ (uuid, Lang { langName = lang })
+    withConnection location $ \conn -> do
+      r <- queryNamed conn getLangByIdQuery [ ":id" := uuid ]
+      case r of
+        [] -> return Nothing
+        (uuid, lang):_ -> return $ Just $ (uuid, Lang { langName = lang })
 
-  save SQLiteEngine{..} = undefined
+  save SQLiteEngine{..} (uuid, lang@Lang{..}) = liftIO $ do
+    withConnection location $ \conn -> do
+      if uuid == nil
+        then do
+        executeNamed conn createLang [ ":id" := uuid, ":name" := langName ]
+        lastRowId <- lastInsertRowId conn
+        r <- queryNamed conn getLangIdByRowId [ ":rowid" := lastRowId ]
+        case r of
+          [] -> return (nil, lang)
+          Only uuid':_ -> return (uuid', lang)
+        else do
+        executeNamed conn createLang [ ":id" := uuid, ":name" := langName ]
+        return (uuid, lang)

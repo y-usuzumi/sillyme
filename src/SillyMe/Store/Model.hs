@@ -4,7 +4,6 @@
 
 module SillyMe.Store.Model where
 
-import           Control.DeepSeq
 import           Data.Text
 import           Data.UUID
 import           GHC.Generics
@@ -21,16 +20,15 @@ type UniqueData model = (IdType model, model)
 ------------
 
 data Lang = Lang { langName :: Text
-                 } deriving (Generic, NFData)
+                 } deriving (Generic)
 
 instance Model Lang
 
-
 data SillyCategory = SillyCategory { catName :: Text
-                                   } deriving (Generic, NFData)
+                                   } deriving (Generic)
 
 instance Model SillyCategory
 
 
 data CodeSnippet = CodeSnippet { code :: Text
-                               } deriving (Generic, NFData)
+                               } deriving (Generic)
