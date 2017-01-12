@@ -45,7 +45,7 @@ getLangIdByRowId :: Query
 getLangIdByRowId = "select id from lang where ROWID=:rowid"
 
 instance Repo SQLiteEngine Lang where
-  init SQLiteEngine{..} = undefined
+  init SQLiteEngine{..} _ = undefined
   getAll SQLiteEngine{..} = liftIO $ do
     withConnection location $ \conn -> do
       r <- query_ conn getAllLangsQuery :: IO [(UUID, Text)]
