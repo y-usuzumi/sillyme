@@ -12,5 +12,5 @@ data SQLiteEngine = SQLiteEngine { location :: FilePath
                                  }
 
 instance Engine SQLiteEngine where
-  init ng = sequence_ $ map (R.init ng) [ Proxy :: Proxy Lang
-                                        ]
+  init ng = sequence_ [ R.init ng (Proxy :: Proxy Lang)
+                      ]
