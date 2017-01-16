@@ -31,6 +31,24 @@ library
                      , uuid
                      , text
   default-language:    Haskell2010
+  default-extensions:  ApplicativeDo
+                     , DefaultSignatures
+                     , DeriveAnyClass
+                     , DeriveGeneric
+                     , DeriveLift
+                     , FlexibleContexts
+                     , FlexibleInstances
+                     , GADTs
+                     , KindSignatures
+                     , MultiParamTypeClasses
+                     , NamedFieldPuns
+                     , OverloadedStrings
+                     , QuasiQuotes
+                     , RecordWildCards
+                     , ScopedTypeVariables
+                     , TemplateHaskell
+                     , TypeFamilies
+                     , TypeOperators
 
 executable sillyme
   hs-source-dirs:      app
@@ -42,6 +60,8 @@ executable sillyme
                      , optparse-applicative
                      , text
   default-language:    Haskell2010
+  default-extensions:  ApplicativeDo
+                     , NamedFieldPuns
 
 test-suite sillyme-test
   type:                exitcode-stdio-1.0

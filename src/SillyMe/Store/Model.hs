@@ -1,7 +1,3 @@
-{-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE DeriveGeneric  #-}
-{-# LANGUAGE TypeFamilies   #-}
-
 module SillyMe.Store.Model where
 
 import           Data.Text

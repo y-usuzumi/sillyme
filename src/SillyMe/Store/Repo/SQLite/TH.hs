@@ -1,6 +1,3 @@
-{-# LANGUAGE DeriveLift      #-}
-{-# LANGUAGE TemplateHaskell #-}
-
 module SillyMe.Store.Repo.SQLite.TH where
 
 import           Data.Proxy

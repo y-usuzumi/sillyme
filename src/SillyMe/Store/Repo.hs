@@ -1,7 +1,3 @@
-{-# LANGUAGE GADTs                 #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE RecordWildCards       #-}
-
 module SillyMe.Store.Repo where
 
 import           Control.Monad.IO.Class

@@ -1,5 +1,3 @@
-{-# LANGUAGE RecordWildCards #-}
-
 module SillyMe.Store.Engine.SQLite where
 
 import           Data.Proxy

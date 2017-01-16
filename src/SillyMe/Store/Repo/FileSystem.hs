@@ -1,6 +1,3 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE RecordWildCards       #-}
-
 module SillyMe.Store.Repo.FileSystem where
 
 import           SillyMe.Store.Engine.FileSystem

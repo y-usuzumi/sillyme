@@ -1,6 +1,3 @@
-{-# LANGUAGE ApplicativeDo  #-}
-{-# LANGUAGE NamedFieldPuns #-}
-
 module Main where
 
 import           Data.Text           (Text)
