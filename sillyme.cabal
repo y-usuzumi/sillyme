@@ -22,11 +22,12 @@ library
                      , SillyMe.Store.Model
                      , SillyMe.Store.Repo
                      , SillyMe.Store.Repo.SQLite
-                     , SillyMe.Store.Repo.SQLite.Generics
+                     , SillyMe.Store.Repo.SQLite.TH
   build-depends:       base >= 4.7 && < 5
                      , interpolate
                      , sqlite-simple
                      , template-haskell
+                     , th-lift
                      , unordered-containers
                      , uuid
                      , text
