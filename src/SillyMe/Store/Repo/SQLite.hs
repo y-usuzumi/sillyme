@@ -62,7 +62,7 @@ instance Repo SQLiteEngine Lang where
   getAll SQLiteEngine{..} = liftIO $ do
     withConnection location $ \conn -> do
       r <- query_ conn getAllLangsQuery :: IO [(UUID, Text)]
-      return $ map (id *** Lang) r
+      return $ map (id *** (\ name -> Lang { langId = nil, langName = name })) r
 
   getById SQLiteEngine{..} uuid = liftIO $ do
     withConnection location $ \conn -> do
@@ -111,10 +111,3 @@ updateSillyCategory = "update silly_category set name=:name where id=:id"
 
 getSillyCategoryIdByRowIdQuery :: Query
 getSillyCategoryIdByRowIdQuery = "select id from silly_category where ROWID=:rowid"
-
-data X = Hello { uuid :: UUID
-               , name :: Text
-               , age :: Int
-               }
-
-mkSQLiteModel ''X
