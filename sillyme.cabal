@@ -22,7 +22,8 @@ library
                      , SillyMe.Store.Model
                      , SillyMe.Store.Repo
                      , SillyMe.Store.Repo.SQLite
-                     , SillyMe.Store.Repo.SQLite.TH
+                     , TOSPIO.Database.Garbage.SQLite.TH
+                     , TOSPIO.Database.Garbage.Model
   build-depends:       base >= 4.7 && < 5
                      , interpolate
                      , sqlite-simple

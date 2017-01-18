@@ -16,7 +16,6 @@ import           Database.SQLite.Simple.ToField
 import {-# SOURCE#-}          SillyMe.Store.Engine.SQLite
 import           SillyMe.Store.Model
 import           SillyMe.Store.Repo
-import           SillyMe.Store.Repo.SQLite.TH
 
 instance FromField UUID where
   fromField f@(Field (SQLText t) _)
@@ -62,7 +61,7 @@ instance Repo SQLiteEngine Lang where
   getAll SQLiteEngine{..} = liftIO $ do
     withConnection location $ \conn -> do
       r <- query_ conn getAllLangsQuery :: IO [(UUID, Text)]
-      return $ map (id *** (\ name -> Lang { langId = nil, langName = name })) r
+      return $ map (id *** (\ name -> Lang { langName = name })) r
 
   getById SQLiteEngine{..} uuid = liftIO $ do
     withConnection location $ \conn -> do

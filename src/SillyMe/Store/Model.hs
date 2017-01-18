@@ -3,26 +3,16 @@ module SillyMe.Store.Model where
 import           Data.Text
 import           Data.UUID
 import           GHC.Generics
-import           SillyMe.Store.Repo.SQLite.TH
-
-class Model model where
-  type IdType model :: *
-  type IdType model = UUID
-
-type UniqueData model = (IdType model, model)
+import           TOSPIO.Database.Garbage.Model
+import           TOSPIO.Database.Garbage.SQLite.TH
 
 
-------------
--- Models --
-------------
-
-data Lang = Lang { langId :: UUID
-                 , langName :: Text
+data Lang = Lang { langName :: Text
                  } deriving (Generic)
 
 instance Model Lang
 
-mkSQLiteModel MkSQLiteModelParams{ firstFieldAsPK = True } ''Lang
+mkSQLiteModel MkSQLiteModelParams ''Lang
 
 data SillyCategory = SillyCategory { catName :: Text
                                    } deriving (Generic)

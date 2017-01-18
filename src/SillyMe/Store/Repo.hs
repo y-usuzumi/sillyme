@@ -5,6 +5,7 @@ import           Data.Proxy
 import           SillyMe.Store
 import           SillyMe.Store.Engine
 import           SillyMe.Store.Model
+import           TOSPIO.Database.Garbage.Model
 
 class Model model => Repo engine model where
   init :: MonadIO mio => engine -> Proxy model -> mio ()

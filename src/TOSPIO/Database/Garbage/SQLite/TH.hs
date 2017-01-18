@@ -1,14 +1,20 @@
-module SillyMe.Store.Repo.SQLite.TH where
+module TOSPIO.Database.Garbage.SQLite.TH where
 
 import           Data.Char
+import qualified Data.HashMap.Strict               as HM
+import           Data.List
 import           Data.Proxy
+import           Data.String.Interpolate
+import           Data.Text                         (Text)
+import qualified Data.Text                         as T
 import           Data.Typeable
-import           Data.Text (Text)
+import           Data.UUID                         (UUID)
+import           Database.SQLite.Simple
 import           Language.Haskell.TH
 import           Language.Haskell.TH.Lift
 import           Language.Haskell.TH.Syntax
-import qualified Data.HashMap.Strict as HM
-import           Data.UUID (UUID)
+import           TOSPIO.Database.Garbage.Model
+import           TOSPIO.Database.Garbage.QueryPack
 
 sqlTypeMap :: HM.HashMap TypeRep String
 sqlTypeMap = HM.fromList [ (typeOf (undefined :: Int), "INTEGER")
@@ -18,16 +24,6 @@ sqlTypeMap = HM.fromList [ (typeOf (undefined :: Int), "INTEGER")
                          , (typeOf (undefined :: UUID), "VARCHAR(40)")
                          ]
 
-data FieldDef = FieldDef { name    :: String
-                         , type_ :: TypeRep
-                         , sqlType :: String
-                         , isPK    :: Bool
-                         } deriving Show
-
-
-class QueryPack model where
-  tableName :: Proxy model -> String
-  fields :: Proxy model -> [FieldDef]
 
 typeOfExp :: Type -> ExpQ
 typeOfExp t = appE
@@ -35,11 +31,10 @@ typeOfExp t = appE
   (sigE (varE $ mkName "undefined") (return t))
 
 
-data MkSQLiteModelParams = MkSQLiteModelParams { firstFieldAsPK :: Bool
-                                               }
+data MkSQLiteModelParams = MkSQLiteModelParams
 
 mkSQLiteModel :: MkSQLiteModelParams -> Name -> Q [Dec]
-mkSQLiteModel MkSQLiteModelParams{..} name = do
+mkSQLiteModel MkSQLiteModelParams name = do
   TyConI dec <- reify name
   let fields = case dec of
         DataD _ _ _ _ [] _      -> error "Goddamn"
@@ -59,15 +54,20 @@ mkSQLiteModel MkSQLiteModelParams{..} name = do
           | otherwise = c:camelToLCWU_ cs
     mkFieldExprs :: Con -> [ExpQ]
     mkFieldExprs (RecC name [])    = error "Goddamn"
-    mkFieldExprs (RecC name (f:o)) =
-      mkFieldExpr firstFieldAsPK f : (map (mkFieldExpr False) o)
-    mkFieldExprs _                 = error "Goddamn"
-    mkFieldExpr :: Bool -> (Name, Bang, Type) -> Q Exp
-    mkFieldExpr isPK (name, _, type_) = let
-      in
+    mkFieldExprs (RecC name o) =
+      mkPKFieldExpr [t|IdType $(conT name)|] : map mkFieldExpr o
+    mkFieldExpr :: (Name, Bang, Type) -> Q Exp
+    mkFieldExpr (name, _, type_) =
       [|FieldDef { name = nameBase name
                  , type_ = typeOf (undefined :: $(return type_))
                  , sqlType = sqlTypeMap HM.! (typeOf (undefined :: $(return type_)))
-                 , isPK = isPK
+                 , isPK = False
+                 }|]
+    mkPKFieldExpr :: Q Type -> Q Exp
+    mkPKFieldExpr type_ =
+      [|FieldDef { name = "id"
+                 , type_ = typeOf (undefined :: $(type_))
+                 , sqlType = sqlTypeMap HM.! (typeOf (undefined :: $(type_)))
+                 , isPK = True
                  }|]
 
